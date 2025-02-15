@@ -47,8 +47,6 @@ API_KEY = os.getenv("GRDQ_API_KEY")
 # Use the API key in your code
 llm = ChatGroq(model="deepseek-r1-distill-llama-70b", api_key=API_KEY)
 # llm = ChatOpenAI(model="gpt-4o-mini")
-# llm = ChatGroq(model="deepseek-r1-distill-llama-70b", api_key="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")
-# llm = ChatGroq(model="deepseek-r1-distill-llama-70b")
 
 parser = StrOutputParser()
 

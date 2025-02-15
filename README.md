@@ -1,4 +1,3 @@
-# AI-Powered-Summerizer
 # NeuralSumm.AI
 
 ## 📌 Introduction

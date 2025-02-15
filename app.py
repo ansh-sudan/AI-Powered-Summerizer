@@ -6,12 +6,31 @@ from langchain_openai import ChatOpenAI
 from langchain_core.prompts import ChatPromptTemplate
 from langchain_core.output_parsers import StrOutputParser
 from dotenv import load_dotenv
-from openai import OpenAI
+import os
 LOGO_URL_LARGE = "https://docs.streamlit.io/logo.svg"
 LOGO_URL_SMALL = "https://docs.streamlit.io/logo.svg"
 
 load_dotenv()
-st.title('Summerizer App')
+st.markdown(
+    """
+    <style>
+    @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700&display=swap');
+    .custom-title {
+        font-size: 38px;
+        color: rgb(255, 99, 71);
+        font-family: 'Montserrat', sans-serif;
+        text-align: center;
+        margin-bottom: 20px;
+        font-weight: bold;
+        font-style: italic;
+    }
+    </style>
+    """,
+    unsafe_allow_html=True
+)
+
+# Using HTML to display the customized title
+st.markdown('<h1 class="custom-title">NEURAL SUMM.AI</h1>', unsafe_allow_html=True)
 st.divider()
 # Add the logo
 st.logo(
@@ -23,13 +42,13 @@ st.markdown("## Start Summarizing your document here")
 
 # Upload File
 uploaded_file = st.file_uploader("Choose a Text, PDF or CSV File",type=['txt','pdf','csv'])
+API_KEY = os.getenv("GRDQ_API_KEY")
 
-# llm = ChatOpenAI(model="gpt-4o-mini", api_key="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" )
-# llm = ChatOpenAI(model="gpt-4o-mini" )
-llm = ChatGroq(model="deepseek-r1-distill-llama-70b", api_key="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")
+# Use the API key in your code
+llm = ChatGroq(model="deepseek-r1-distill-llama-70b", api_key=API_KEY)
+# llm = ChatOpenAI(model="gpt-4o-mini")
+# llm = ChatGroq(model="deepseek-r1-distill-llama-70b", api_key="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")
 # llm = ChatGroq(model="deepseek-r1-distill-llama-70b")
-# llm = OpenAI(api_key="sk-aed332429b37491faa6c05a90e4499f1", base_url="https://api.deepseek.com")
-
 
 parser = StrOutputParser()
 
@@ -92,6 +111,7 @@ if st.button('Summarize'):
         try:
             for i, chunk in enumerate(chunks):
                 print(f"Proessing Chunk {i + 1}/{len(chunks)}")
+                
 
                 #prompt
                 chunk_prompt = ChatPromptTemplate.from_template("You are a highly skilled AI that can summarize text. Please summarize the following text:\n \n {document}")
@@ -118,10 +138,63 @@ if st.button('Summarize'):
 
             final_chain = final_prompt | llm | parser
             final_summary = final_chain.invoke({"document": combined_summary})
+            final_summary_cleaned = final_summary.replace('<think>', '').replace('</think>', '') 
 
-            print("FINAL SUMMARY: ",final_summary)
-            container.write(final_summary)
+            print("FINAL SUMMARY: ",final_summary_cleaned)
+            container.write(final_summary_cleaned)
 
         except Exception as e:
             print("error creating final summary",e)
             st.error(f"Error creating final summary: {e}")
+        
+
+if st.button("Connect with me on LinkedIn"):
+    st.markdown(
+        """
+    <style>
+    .linkedin-button {
+        background-color: #0072b1;
+        color: white;
+        padding: 10px 20px;
+        text-align: center;
+        text-decoration: none;
+        display: inline-block;
+        font-size: 16px;
+        margin: 4px 2px;
+        cursor: pointer;
+        border-radius: 8px;
+        border: none;
+    }
+    .linkedin-button:hover {
+        background-color: #005f91;
+    }
+    </style>
+    <a href="https://www.linkedin.com/in/ansh-sudan-7aa596229/" target="_blank">
+        <button class="linkedin-button">Visit my LinkedIn Profile</button>
+    </a>
+        """,
+        unsafe_allow_html=True
+    )
+
+st.markdown("""
+        ### ABOUT ME
+        - **Name:** Ansh Sudan
+        - **Profession:** AI/ML Enthusiast / Developer
+        - **GitHub:** [GitHub Profile](https://github.com/ansh-sudan)
+             """)
+
+    #     try:
+    #         response = client.chat.completions.create(
+    #     model="gpt-4o",  
+    #     messages=[{"role": "user", "content": f"Summarize this: {document_text}"}],
+    #     max_tokens=200
+    # )
+    #         summary = response.choices[0].message.content
+    #     except openai.OpenAIError as e:
+    #         st.error(f"OpenAI API error: {e}")
+    #     except Exception as e:
+    #         st.error(f"Connection error: {e}")
+
+
+        
+
